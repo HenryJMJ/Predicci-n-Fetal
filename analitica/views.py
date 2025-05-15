@@ -144,8 +144,9 @@ def entrenamiento(request):
 
     return render(request, 'analitica/entrenamiento.html')
 
-# Al comienzo del archivo, fuera de cualquier función
+
 modelo_rna = None
+mapa_cognitivo = None
 
 def get_modelo_rna():
     global modelo_rna
@@ -154,6 +155,13 @@ def get_modelo_rna():
         modelo_rna = load_model(ruta)
     return modelo_rna
 
+def get_mapa_cognitivo():
+    global mapa_cognitivo
+    if mapa_cognitivo is None:
+        ruta = os.path.join(os.path.dirname(__file__), 'modelos_entrenados', 'mapa_cognitivo_difuso.pkl')
+        mapa_cognitivo = joblib.load(ruta)
+    return mapa_cognitivo
+
 def prediccion_individual(request):
     resultado = None
 
@@ -161,15 +169,9 @@ def prediccion_individual(request):
         form = PrediccionIndividualForm(request.POST)
 
         if form.is_valid():
-            import numpy as np
-            import joblib
-            import os
-            import random
-            import pandas as pd
-            from keras.models import load_model
-
             df = pd.DataFrame([form.cleaned_data])
 
+            # Renombrar columnas
             mapeo = {
                 'Age': 'C1', 'BMI': 'C2', 'Gestational_age_of_delivery': 'C3', 'Gravidity': 'C4', 'Parity': 'C5',
                 'Initial_onset_symptoms': 'C6', 'Gestational_age_of_IOS_onset': 'C7', 'Interval_IOS_to_delivery': 'C8',
@@ -208,29 +210,27 @@ def prediccion_individual(request):
 
             # --- Mapa Cognitivo Difuso ---
             pred_mcd = 'Modelo no entrenado aún'
-            mcd_path = os.path.join(MODELOS_DIR, 'mapa_cognitivo_difuso.pkl')
-            if os.path.exists(mcd_path):
-                try:
-                    G = joblib.load(mcd_path)
-                    activacion = {f'C{i}': float(df.iloc[0][f'C{i}']) for i in range(1, 31)}
+            try:
+                G = get_mapa_cognitivo()
+                activacion = {f'C{i}': float(df.iloc[0][f'C{i}']) for i in range(1, 31)}
 
-                    if 'C31' not in G.nodes:
-                        G.add_node('C31')
-                        for origen in random.sample(list(activacion.keys()), 5):
-                            G.add_edge(origen, 'C31', weight=random.uniform(-1, 1))
+                if 'C31' not in G.nodes:
+                    G.add_node('C31')
+                    for origen in random.sample(list(activacion.keys()), 5):
+                        G.add_edge(origen, 'C31', weight=random.uniform(-1, 1))
 
-                    for _ in range(2):
-                        nueva_activacion = activacion.copy()
-                        influencias = G.in_edges('C31', data=True)
-                        suma = sum(activacion.get(origen, 0) * peso['weight'] for origen, _, peso in influencias)
-                        nueva_activacion['C31'] = np.tanh(suma)
-                        activacion.update(nueva_activacion)
+                for _ in range(2):
+                    nueva_activacion = activacion.copy()
+                    influencias = G.in_edges('C31', data=True)
+                    suma = sum(activacion.get(origen, 0) * peso['weight'] for origen, _, peso in influencias)
+                    nueva_activacion['C31'] = np.tanh(suma)
+                    activacion.update(nueva_activacion)
 
-                    valor_c31 = activacion.get('C31', 0)
-                    pred_mcd = 'FGR' if valor_c31 > 0.1 else 'Normal'
+                valor_c31 = activacion.get('C31', 0)
+                pred_mcd = 'FGR' if valor_c31 > 0.1 else 'Normal'
 
-                except Exception as e:
-                    pred_mcd = f'Error: {e}'
+            except Exception as e:
+                pred_mcd = f'Error: {e}'
 
             resultado['Mapa Cognitivo Difuso'] = pred_mcd
 
@@ -273,7 +273,6 @@ def prediccion_individual(request):
                 resultado_mcd=resultado['Mapa Cognitivo Difuso']
             )
 
-
     else:
         form = PrediccionIndividualForm()
 
@@ -281,7 +280,6 @@ def prediccion_individual(request):
         'form': form,
         'prediccion': resultado
     })
-
 
 def prediccion_lote(request):
     errores = []
