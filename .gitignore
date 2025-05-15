@@ -1,17 +1,39 @@
-# Entorno virtual
-venv/
-env/
-
-# Archivos de configuración locales
-*.pyc
+# Byte-compiled / optimized / DLL files
 __pycache__/
-db.sqlite3
-*.sqlite3
-*.log
+*.py[cod]
+*$py.class
+
+# Archivos de configuración locales de Python
+*.env
+.env
 
 # Archivos de Django
 *.pot
-*.py[cod]
-staticfiles/
-media/
-.env
+*.pyc
+
+# Ignorar bases de datos SQLite locales
+db.sqlite3
+*.sqlite3
+
+# Ignorar archivos de log
+*.log
+
+# Ignorar archivos estáticos compilados y media subidos por usuarios
+/staticfiles/
+/media/
+
+# Ignorar archivos temporales y caché de editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignorar caché de migraciones __pycache__ pero NO ignorar los archivos .py de migración
+**/migrations/__pycache__/
+**/migrations/*.pyc
+!**/migrations/*.py
+
+# NO ignorar carpeta de modelos entrenados para deploy
+# modelos_entrenados/ 
+
+# Si quieres ignorar otros archivos que no has mencionado, agrégalos aquí.
