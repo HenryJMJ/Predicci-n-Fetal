@@ -125,3 +125,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Detectar hostname de Render en producción
+if os.environ.get('RENDER'):
+    import socket
+    hostname = socket.gethostname()
+    external_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+    ALLOWED_HOSTS = [hostname]
+    if external_hostname:
+        ALLOWED_HOSTS.append(external_hostname)
