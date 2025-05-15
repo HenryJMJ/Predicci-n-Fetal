@@ -144,6 +144,15 @@ def entrenamiento(request):
 
     return render(request, 'analitica/entrenamiento.html')
 
+# Al comienzo del archivo, fuera de cualquier función
+modelo_rna = None
+
+def get_modelo_rna():
+    global modelo_rna
+    if modelo_rna is None:
+        ruta = os.path.join(os.path.dirname(__file__), 'modelos_entrenados', 'modelo_rna.h5')
+        modelo_rna = load_model(ruta)
+    return modelo_rna
 
 def prediccion_individual(request):
     resultado = None
@@ -185,7 +194,7 @@ def prediccion_individual(request):
             MODELOS_DIR = os.path.join(os.path.dirname(__file__), 'modelos_entrenados')
             modelo_log = joblib.load(os.path.join(MODELOS_DIR, 'modelo_log.pkl'))
             modelo_svm = joblib.load(os.path.join(MODELOS_DIR, 'modelo_svm.pkl'))
-            modelo_rna = load_model(os.path.join(MODELOS_DIR, 'modelo_rna.h5'))
+            modelo_rna = get_modelo_rna()
 
             pred_log = modelo_log.predict(df)[0]
             pred_svm = modelo_svm.predict(df)[0]
