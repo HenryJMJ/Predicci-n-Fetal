@@ -19,7 +19,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-ax!4glh(e@c6kj
 
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'  # Por defecto True si no está definido
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,predicci-n-fetal.onrender.com').split(',')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost,predicci-n-fetal.onrender.com').split(',')
 
 
 # Application definition
