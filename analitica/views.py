@@ -145,13 +145,35 @@ def entrenamiento(request):
     return render(request, 'analitica/entrenamiento.html')
 
 
+modelo_log = None
+modelo_svm = None
 modelo_rna = None
 mapa_cognitivo = None
+
+def get_modelo_log():
+    global modelo_log
+    if modelo_log is None:
+        ruta = os.path.join(os.path.dirname(__file__), 'modelos_entrenados', 'modelo_log.pkl')
+        if not os.path.exists(ruta):
+            raise FileNotFoundError("El modelo de Regresión Logística aún no ha sido entrenado. Ve a la página de entrenamiento primero.")
+        modelo_log = joblib.load(ruta)
+    return modelo_log
+
+def get_modelo_svm():
+    global modelo_svm
+    if modelo_svm is None:
+        ruta = os.path.join(os.path.dirname(__file__), 'modelos_entrenados', 'modelo_svm.pkl')
+        if not os.path.exists(ruta):
+            raise FileNotFoundError("El modelo SVM aún no ha sido entrenado. Ve a la página de entrenamiento primero.")
+        modelo_svm = joblib.load(ruta)
+    return modelo_svm
 
 def get_modelo_rna():
     global modelo_rna
     if modelo_rna is None:
         ruta = os.path.join(os.path.dirname(__file__), 'modelos_entrenados', 'modelo_rna.h5')
+        if not os.path.exists(ruta):
+            raise FileNotFoundError("El modelo Red Neuronal aún no ha sido entrenado. Ve a la página de entrenamiento primero.")
         modelo_rna = load_model(ruta)
     return modelo_rna
 
@@ -159,6 +181,8 @@ def get_mapa_cognitivo():
     global mapa_cognitivo
     if mapa_cognitivo is None:
         ruta = os.path.join(os.path.dirname(__file__), 'modelos_entrenados', 'mapa_cognitivo_difuso.pkl')
+        if not os.path.exists(ruta):
+            raise FileNotFoundError("El Mapa Cognitivo Difuso aún no ha sido entrenado. Ve a la página de entrenamiento primero.")
         mapa_cognitivo = joblib.load(ruta)
     return mapa_cognitivo
 
@@ -193,9 +217,8 @@ def prediccion_individual(request):
                     df[col] = 0
             df = df[columnas_modelo]
 
-            MODELOS_DIR = os.path.join(os.path.dirname(__file__), 'modelos_entrenados')
-            modelo_log = joblib.load(os.path.join(MODELOS_DIR, 'modelo_log.pkl'))
-            modelo_svm = joblib.load(os.path.join(MODELOS_DIR, 'modelo_svm.pkl'))
+            modelo_log = get_modelo_log()
+            modelo_svm = get_modelo_svm()
             modelo_rna = get_modelo_rna()
 
             pred_log = modelo_log.predict(df)[0]
