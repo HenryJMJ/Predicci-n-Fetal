@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ProyectoFinal
+    name: PREDICT-FETO
     env: python
     plan: starter
     buildCommand: |
