@@ -9,3 +9,5 @@ openpyxl>=3.0.0
 tensorflow>=2.9.0
 keras>=2.9.0
 networkx>=2.6.0
+django-environ
+gunicorn
