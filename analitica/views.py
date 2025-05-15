@@ -9,6 +9,7 @@ import io
 import base64
 import joblib
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1" 
 import random
 import networkx as nx
 from django.db.models import Q
@@ -36,6 +37,12 @@ os.makedirs(MODELOS_DIR, exist_ok=True)
 def home(request):
     return render(request, 'analitica/home.html')
 
+import tensorflow as tf
+from functools import lru_cache
+
+@lru_cache(maxsize=1)
+def load_model_rnn():
+    return tf.keras.models.load_model("modelo_rnn.keras")
 
 def entrenamiento(request):
     if request.method == 'POST' and request.FILES.get('archivo'):
