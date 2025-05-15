@@ -1,1 +1,1 @@
-web: gunicorn ProyectoFinal.wsgi --bind 0.0.0.0:$PORT
+web: gunicorn ProyectoFinal.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120
