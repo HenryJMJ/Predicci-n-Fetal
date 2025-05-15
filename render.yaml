@@ -11,7 +11,7 @@ services:
     startCommand: gunicorn ProyectoFinal.wsgi:application --bind 0.0.0.0:$PORT --timeout 180 --workers 1
     envVars:
       - key: DJANGO_SECRET_KEY
-        fromDatabase: true
+        fromDatabase: "django-insecure-ax!4glh(e@c6kjz&x4yx96q*6_c&jhi!+eg4l-u^km7bi5=#=z"
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
