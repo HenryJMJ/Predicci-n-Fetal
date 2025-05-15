@@ -1,0 +1,36 @@
+{% extends 'analitica/base.html' %}
+
+{% block title %}Predicción por Lote{% endblock %}
+
+{% block contenido %}
+<h2>Predicción en Lote</h2>
+<p>Sube un archivo Excel (.xlsx) que contenga las columnas necesarias para predecir.</p>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="archivo" required>
+    <button type="submit">Procesar</button>
+</form>
+
+{% if errores %}
+    <h3 style="color: red;">Errores encontrados:</h3>
+    <ul>
+        {% for error in errores %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if resultados %}
+    <h3>Resultados de los Modelos:</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+        {% for nombre, datos in resultados.items %}
+            <div style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px; width: 320px;">
+                <h4 style="margin-bottom: 0.5rem;">{{ nombre }}</h4>
+                <p><strong>Exactitud:</strong> {{ datos.exactitud }}</p>
+                <img src="data:image/png;base64,{{ datos.imagen }}" alt="Matriz de Confusión" style="width: 100%; height: auto;">
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Analítica FGR{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'analitica/estilos.css' %}">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f7f9fb;
+    }
+    
+    header {
+        background: #003366;
+        color: white;
+        padding: 15px;
+        text-align: center;
+    }
+    
+    nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 5px;
+    transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    nav a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #e0e0e0;
+    }
+    
+    main {
+        margin-top: 20px;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+    }
+    
+    button {
+        padding: 8px 16px;
+        background: #0066cc;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+    
+    button:hover {
+        background: #004c99;
+    }
+    
+    footer {
+        text-align: center;
+        padding: 10px;
+        color: gray;
+        font-size: 0.9em;
+    }    
+</style>
+<body>
+    <header>
+        <h1>Analítica de Datos - Crecimiento Fetal</h1>
+        <nav>
+            <a href="{% url 'home' %}">Inicio</a>
+            <a href="{% url 'entrenamiento' %}">Entrenar Modelos</a>
+            <a href="{% url 'prediccion_individual' %}">Predicción Individual</a>
+            <a href="{% url 'prediccion_lote' %}">Predicción por Lote</a>
+            <a href="{% url 'historial_predicciones' %}">Historial</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block contenido %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>Proyecto Final - Analítica de Datos &copy; 2025</p>
+    </footer>
+</body>
+</html>

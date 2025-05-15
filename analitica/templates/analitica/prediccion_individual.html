@@ -1,0 +1,39 @@
+{% extends 'analitica/base.html' %}
+
+{% block title %}Predicción Individual{% endblock %}
+
+{% block contenido %}
+<h2>Predicción Individual</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <!-- Botón para predecir -->
+    <button type="submit">Predecir</button>
+</form>
+
+{% if prediccion %}
+    <h3>Resultados:</h3>
+    <ul>
+        {% for modelo, valor in prediccion.items %}
+            <li><strong>{{ modelo }}:</strong> {{ valor }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<!-- Script para evitar la letra 'e' en inputs numéricos -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        input.addEventListener('keydown', function (e) {
+            if (["e", "E"].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'analitica/base.html' %}
+{% block title %}Historial de Predicciones{% endblock %}
+
+{% block contenido %}
+<h2>Historial de Predicciones Individuales</h2>
+
+<form method="get" style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+    <div>
+        <label>Edad mínima:</label>
+        <input type="number" name="edad_min" value="{{ edad_min }}">
+    </div>
+    <div>
+        <label>Edad máxima:</label>
+        <input type="number" name="edad_max" value="{{ edad_max }}">
+    </div>
+    <div>
+        <label>Desde (fecha):</label>
+        <input type="date" name="fecha_min" value="{{ fecha_min }}">
+    </div>
+    <div>
+        <label>Hasta (fecha):</label>
+        <input type="date" name="fecha_max" value="{{ fecha_max }}">
+    </div>
+    <button type="submit">Filtrar</button>
+</form>
+
+<table border="1" style="width: 100%; margin-top: 1rem; border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th>Edad</th>
+            <th>BMI</th>
+            <th>Edad Gestacional</th>
+            <th>Logística</th>
+            <th>SVM</th>
+            <th>Red Neuronal</th>
+            <th>Mapa Cognitivo Difuso</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for prediccion in historial %}
+        <tr class="clickable-row" data-href="{% url 'detalles_prediccion' prediccion.id %}" style="cursor: pointer;">
+            <td>{{ prediccion.nombre }}</td>
+            <td>{{ prediccion.fecha|date:"Y-m-d H:i" }}</td>
+            <td>{{ prediccion.C1 }}</td>
+            <td>{{ prediccion.C2 }}</td>
+            <td>{{ prediccion.C3 }}</td>
+            <td>{{ prediccion.resultado_log }}</td>
+            <td>{{ prediccion.resultado_svm }}</td>
+            <td>{{ prediccion.resultado_rna }}</td>
+            <td>{{ prediccion.resultado_mcd }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">No hay predicciones que coincidan con los filtros.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('.clickable-row');
+        rows.forEach(row => {
+            row.addEventListener('click', () => {
+                window.location.href = row.dataset.href;
+            });
+            row.addEventListener('mouseover', () => {
+                row.style.backgroundColor = '#f0f8ff';
+            });
+            row.addEventListener('mouseout', () => {
+                row.style.backgroundColor = '';
+            });
+        });
+    });
+</script>
+{% endblock %}

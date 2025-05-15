@@ -1,0 +1,35 @@
+{% extends 'analitica/base.html' %}
+
+{% block title %}Entrenamiento{% endblock %}
+
+{% block contenido %}
+<h2>Entrenamiento de Modelos</h2>
+<p>Sube un archivo Excel (.xlsx) que contenga las columnas de C1 a C31.</p>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="archivo" required>
+    <button type="submit">Entrenar Modelos</button>
+</form>
+
+{% if resultado %}
+    <h3>Exactitud de los modelos:</h3>
+    <p>{{ resultado|safe }}</p>
+
+    <h4>Matriz de Confusión - Regresión Logística</h4>
+    {% if grafica_cm %}
+        <img src="data:image/png;base64,{{ grafica_cm }}" alt="Matriz de Confusión">
+    {% endif %}
+
+    <h4>Comparación de Exactitudes</h4>
+    {% if grafica_bar %}
+        <img src="data:image/png;base64,{{ grafica_bar }}" alt="Gráfico de Barras">
+    {% endif %}
+
+    <h4>Mapa Cognitivo Difuso</h4>
+    {% if grafica_mcd %}
+        <img src="data:image/png;base64,{{ grafica_mcd }}" alt="Mapa Cognitivo Difuso">
+    {% endif %}
+
+{% endif %}
+{% endblock %}

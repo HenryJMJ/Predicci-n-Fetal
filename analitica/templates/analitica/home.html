@@ -1,0 +1,112 @@
+{% extends 'analitica/base.html' %}
+{% load static %}
+{% block title %}Inicio{% endblock %}
+
+{% block contenido %}
+<style>
+/* Animaciones al cargar */
+@keyframes slideFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bloque-accion {
+    flex: 1 1 250px;
+    background: #ecf0f1;
+    padding: 1.5rem;
+    border-radius: 10px;
+    opacity: 0;
+    animation: slideFadeIn 1s ease forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Diferente delay para entrada animada */
+.bloque-accion:nth-child(1) {
+    animation-delay: 0.2s;
+}
+.bloque-accion:nth-child(2) {
+    animation-delay: 0.4s;
+}
+.bloque-accion:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+/* Hover: sombra + escala */
+.bloque-accion:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+</style>
+
+<div style="text-align: center; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: #2c3e50;">
+        Plataforma de Analítica para Crecimiento Fetal
+    </h1>
+
+    <p style="font-size: 1.1rem; max-width: 900px; margin: 0 auto; color: #555;">
+        Bienvenido a un sistema inteligente diseñado para el análisis avanzado del crecimiento fetal.
+        Esta herramienta combina técnicas de machine learning con datos clínicos reales para apoyar a profesionales de la salud en la detección temprana de FGR (Restricción del Crecimiento Intrauterino).
+    </p>
+
+    <div style="margin: 3rem auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 3rem;">
+        <div>
+            <img src="{% static 'img/feto.jpg' %}" alt="Ecografía Fetal" style="width: 500px; height: 350px; object-fit: cover; border-radius: 12px;">
+            <p style="margin-top: 0.5rem; font-size: 0.95rem; color: #777;">Análisis clínico a partir de registros médicos</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 3rem;">
+        <h2 style="color: #2c3e50;">¿Por qué usar este sistema?</h2>
+        <ul style="list-style: none; padding: 0; max-width: 800px; margin: 1.5rem auto; text-align: left; color: #444; font-size: 1rem;">
+            <li style="margin-bottom: 0.5rem;">✔️ Mejora el diagnóstico temprano de FGR mediante predicciones automatizadas.</li>
+            <li style="margin-bottom: 0.5rem;">✔️ Basado en algoritmos de aprendizaje automático entrenados con datos reales.</li>
+            <li style="margin-bottom: 0.5rem;">✔️ Permite evaluar individualmente o por lote múltiples registros clínicos.</li>
+            <li style="margin-bottom: 0.5rem;">✔️ Historial detallado y trazable de cada predicción realizada.</li>
+            <li style="margin-bottom: 0.5rem;">✔️ Visualización clara y comprensible de los resultados mediante gráficos.</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 2rem; background: #fcecec; border-left: 5px solid #e74c3c; padding: 1rem 1.5rem;">
+        <strong>⚠️ Importante:</strong>
+        <p style="margin: 0; color: #c0392b;">
+            Esta plataforma tiene fines educativos y de apoyo clínico. No reemplaza el juicio médico profesional. 
+            Toda decisión médica debe ser tomada por un especialista.
+        </p>
+    </div>
+
+    <div style="margin-top: 2rem;">
+        <p style="color: #2c3e50;">
+            <span style="color: red; font-weight: bold;">PDF</span> ¿Nuevo en la plataforma? 
+            <a href="{% static 'docs/manual_usuario.pdf' %}" target="_blank" style="color: #0077b6; font-weight: bold;">
+                Consulta la guía de uso
+            </a> 
+            para aprender cómo cargar datos, entrenar modelos y leer los resultados.
+        </p>
+    </div>
+
+    <div style="margin-top: 3rem;">
+        <h2 style="color: #34495e;">¿Qué puedes hacer aquí?</h2>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin-top: 2rem;">
+            <div class="bloque-accion">
+                <h3 style="color: #2c3e50;">Entrenar Modelos</h3>
+                <p style="color: #555;">Carga tu dataset clínico para entrenar modelos predictivos con algoritmos como regresión logística, SVM, redes neuronales y mapas cognitivos difusos.</p>
+            </div>
+            <div class="bloque-accion">
+                <h3 style="color: #2c3e50;">Realizar Predicciones</h3>
+                <p style="color: #555;">Usa los modelos entrenados para hacer predicciones individuales o por lotes. El sistema valida los datos y muestra resultados con visualizaciones.</p>
+            </div>
+            <div class="bloque-accion">
+                <h3 style="color: #2c3e50;">Consultar Historial</h3>
+                <p style="color: #555;">Accede al historial de predicciones realizadas, filtra por edad o fecha, y consulta en detalle los datos usados en cada evaluación.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

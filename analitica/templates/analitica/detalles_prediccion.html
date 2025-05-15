@@ -1,0 +1,28 @@
+{% extends 'analitica/base.html' %}
+{% block title %}Detalles de la Predicción{% endblock %}
+
+{% block contenido %}
+<h2>Detalles de la Predicción</h2>
+<p><strong>Nombre:</strong> {{ prediccion.nombre }}</p>
+<p><strong>Fecha:</strong> {{ prediccion.fecha|date:"Y-m-d H:i" }}</p>
+
+<h3>Datos ingresados:</h3>
+<table border="1" cellpadding="5">
+    {% for nombre, valor in campos.items %}
+    <tr>
+        <td><strong>{{ nombre }}</strong></td>
+        <td>{{ valor }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Resultados de los modelos:</h3>
+<ul>
+    {% for nombre, valor in resultados.items %}
+    <li><strong>{{ nombre }}:</strong> {{ valor }}</li>
+    {% endfor %}
+</ul>
+
+<br>
+<a href="{% url 'historial_predicciones' %}">←</a>
+{% endblock %}
