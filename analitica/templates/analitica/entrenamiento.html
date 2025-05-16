@@ -4,6 +4,13 @@
 
 {% block contenido %}
 <h2>Entrenamiento de Modelos</h2>
+
+<p style="color: red; font-weight: bold;">
+    ⚠️ Advertencia: El entrenamiento de modelos solo debe realizarse en tu equipo local. 
+    En el servidor Render (instancia gratuita), esta operación puede tardar demasiado y fallar 
+    debido a los límites de tiempo y recursos.
+</p>
+
 <p>Sube un archivo Excel (.xlsx) que contenga las columnas de C1 a C31.</p>
 
 <form method="post" enctype="multipart/form-data">
@@ -30,6 +37,5 @@
     {% if grafica_mcd %}
         <img src="data:image/png;base64,{{ grafica_mcd }}" alt="Mapa Cognitivo Difuso">
     {% endif %}
-
 {% endif %}
 {% endblock %}
