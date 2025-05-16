@@ -23,19 +23,16 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix, accuracy_score
 
-from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import Dense
-from keras import Input
-
 # Rutas
 DATASET_PATH = os.path.join(settings.BASE_DIR, 'FGR_dataset.xlsx')
 MODELOS_DIR = os.path.join(settings.BASE_DIR, 'analitica', 'modelos_entrenados')
 os.makedirs(MODELOS_DIR, exist_ok=True)
 
 
+from sklearn.neural_network import MLPClassifier  # Asegúrate de importar esto
+
 def home(request):
     return render(request, 'analitica/home.html')
-
 
 def entrenamiento(request):
     if request.method == 'POST' and request.FILES.get('archivo'):
@@ -60,16 +57,11 @@ def entrenamiento(request):
         acc_svm = accuracy_score(y_test, modelo_svm.predict(X_test))
         joblib.dump(modelo_svm, os.path.join(MODELOS_DIR, 'modelo_svm.pkl'))
 
-        # Red Neuronal
-        modelo_rna = Sequential()
-        modelo_rna.add(Input(shape=(X_train.shape[1],)))
-        modelo_rna.add(Dense(32, activation='relu'))
-        modelo_rna.add(Dense(16, activation='relu'))
-        modelo_rna.add(Dense(1, activation='sigmoid'))
-        modelo_rna.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-        modelo_rna.fit(X_train, y_train, epochs=50, batch_size=10, verbose=0)
-        _, acc_rna = modelo_rna.evaluate(X_test, y_test, verbose=0)
-        modelo_rna.save(os.path.join(MODELOS_DIR, 'modelo_rna.h5'))
+        # Red Neuronal con scikit-learn
+        modelo_rna = MLPClassifier(hidden_layer_sizes=(32, 16), activation='relu', max_iter=500, random_state=42)
+        modelo_rna.fit(X_train, y_train)
+        acc_rna = accuracy_score(y_test, modelo_rna.predict(X_test))
+        joblib.dump(modelo_rna, os.path.join(MODELOS_DIR, 'modelo_rna.pkl'))
 
         # Gráfica 1: Matriz de Confusión
         y_pred_log = modelo_log.predict(X_test)
@@ -171,10 +163,10 @@ def get_modelo_svm():
 def get_modelo_rna():
     global modelo_rna
     if modelo_rna is None:
-        ruta = os.path.join(os.path.dirname(__file__), 'modelos_entrenados', 'modelo_rna.h5')
+        ruta = os.path.join(os.path.dirname(__file__), 'modelos_entrenados', 'modelo_rna.pkl')  # ✅ ACTUALIZADO
         if not os.path.exists(ruta):
             raise FileNotFoundError("El modelo Red Neuronal aún no ha sido entrenado. Ve a la página de entrenamiento primero.")
-        modelo_rna = load_model(ruta)
+        modelo_rna = joblib.load(ruta)
     return modelo_rna
 
 def get_mapa_cognitivo():
@@ -223,15 +215,15 @@ def prediccion_individual(request):
 
             pred_log = modelo_log.predict(df)[0]
             pred_svm = modelo_svm.predict(df)[0]
-            pred_rna = int(modelo_rna.predict(df)[0][0] > 0.5)
+            pred_rna = modelo_rna.predict(df)[0]  # 🔄 actualizado
 
             resultado = {
                 'Regresión Logística': 'FGR' if pred_log else 'Normal',
                 'SVM': 'FGR' if pred_svm else 'Normal',
-                'Red Neuronal': 'FGR' if pred_rna else 'Normal',
+                'Red Neuronal': 'FGR' if pred_rna else 'Normal',  # 🔄 actualizado
             }
 
-            # --- Mapa Cognitivo Difuso ---
+            # --- Mapa Cognitivo Difuso --- (sin cambios)
             pred_mcd = 'Modelo no entrenado aún'
             try:
                 G = get_mapa_cognitivo()
@@ -257,7 +249,7 @@ def prediccion_individual(request):
 
             resultado['Mapa Cognitivo Difuso'] = pred_mcd
 
-            # Guardar en historial
+            # Guardar en historial (sin cambios)
             HistorialPrediccion.objects.create(
                 nombre=form.cleaned_data['nombre'],
                 C1=form.cleaned_data['Age'],
@@ -304,6 +296,7 @@ def prediccion_individual(request):
         'prediccion': resultado
     })
 
+
 def prediccion_lote(request):
     errores = []
     resultados = {}
@@ -323,7 +316,7 @@ def prediccion_lote(request):
                 # Cargar modelos supervisados
                 modelo_log = joblib.load(os.path.join(MODELOS_DIR, 'modelo_log.pkl'))
                 modelo_svm = joblib.load(os.path.join(MODELOS_DIR, 'modelo_svm.pkl'))
-                modelo_rna = load_model(os.path.join(MODELOS_DIR, 'modelo_rna.h5'))
+                modelo_rna = joblib.load(os.path.join(MODELOS_DIR, 'modelo_rna.pkl'))  # ✅ ACTUALIZADO
 
                 columnas_esperadas = modelo_log.feature_names_in_
                 if list(X.columns) != list(columnas_esperadas):
@@ -332,7 +325,7 @@ def prediccion_lote(request):
                     # Predicciones supervisadas
                     pred_log = modelo_log.predict(X)
                     pred_svm = modelo_svm.predict(X)
-                    pred_rna = (modelo_rna.predict(X) > 0.5).astype(int).flatten()
+                    pred_rna = modelo_rna.predict(X)  # ✅ ACTUALIZADO
 
                     modelos = {
                         "Regresión Logística": pred_log,
@@ -366,16 +359,13 @@ def prediccion_lote(request):
 
                         pred_mcd = []
                         for idx, fila in X.iterrows():
-                            # Inicializar activación con valores de C1 a C30
                             activacion = {f'C{i}': float(fila[f'C{i}']) for i in range(1, 31)}
 
-                            # Asegurar que C31 exista
                             if 'C31' not in G.nodes:
                                 G.add_node('C31')
                                 for origen in random.sample(list(activacion.keys()), 5):
                                     G.add_edge(origen, 'C31', weight=random.uniform(-1, 1))
 
-                            # Propagación (2 pasos)
                             for _ in range(2):
                                 nueva_activacion = activacion.copy()
                                 influencias = G.in_edges('C31', data=True)
@@ -413,6 +403,7 @@ def prediccion_lote(request):
         'errores': errores,
         'resultados': resultados
     })
+
 
 
 def historial_predicciones(request):
