@@ -8,7 +8,8 @@
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="file" name="archivo" required>
+    <label for="archivo">Archivo Excel (.xlsx):</label>
+    <input type="file" name="archivo" id="archivo" accept=".xlsx" required>
     <button type="submit">Procesar</button>
 </form>
 
@@ -28,7 +29,7 @@
             <div style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px; width: 320px;">
                 <h4 style="margin-bottom: 0.5rem;">{{ nombre }}</h4>
                 <p><strong>Exactitud:</strong> {{ datos.exactitud }}</p>
-                <img src="data:image/png;base64,{{ datos.imagen }}" alt="Matriz de Confusión" style="width: 100%; height: auto;">
+                <img src="data:image/png;base64,{{ datos.imagen }}" alt="Matriz de Confusión - {{ nombre }}" style="width: 100%; height: auto;">
             </div>
         {% endfor %}
     </div>

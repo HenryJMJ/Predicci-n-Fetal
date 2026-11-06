@@ -2,6 +2,29 @@
 {% block title %}Historial de Predicciones{% endblock %}
 
 {% block contenido %}
+<style>
+    .tabla-historial {
+        width: 100%;
+        margin-top: 1rem;
+        border-collapse: collapse;
+    }
+    .tabla-historial th,
+    .tabla-historial td {
+        border: 1px solid #999;
+        padding: 5px 10px;
+        text-align: left;
+    }
+    .tabla-historial thead tr {
+        background-color: #f2f2f2;
+    }
+    .clickable-row {
+        cursor: pointer;
+    }
+    .clickable-row:hover {
+        background-color: #f0f8ff;
+    }
+</style>
+
 <h2>Historial de Predicciones Individuales</h2>
 
 <p style="color: red; font-weight: bold;">
@@ -11,42 +34,43 @@
 
 <form method="get" style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
     <div>
-        <label>Edad mínima:</label>
-        <input type="number" name="edad_min" value="{{ edad_min }}">
+        <label for="edad_min">Edad mínima:</label>
+        <input type="number" name="edad_min" id="edad_min" value="{{ edad_min|default_if_none:'' }}">
     </div>
     <div>
-        <label>Edad máxima:</label>
-        <input type="number" name="edad_max" value="{{ edad_max }}">
+        <label for="edad_max">Edad máxima:</label>
+        <input type="number" name="edad_max" id="edad_max" value="{{ edad_max|default_if_none:'' }}">
     </div>
     <div>
-        <label>Desde (fecha):</label>
-        <input type="date" name="fecha_min" value="{{ fecha_min }}">
+        <label for="fecha_min">Desde (fecha):</label>
+        <input type="date" name="fecha_min" id="fecha_min" value="{{ fecha_min|default_if_none:'' }}">
     </div>
     <div>
-        <label>Hasta (fecha):</label>
-        <input type="date" name="fecha_max" value="{{ fecha_max }}">
+        <label for="fecha_max">Hasta (fecha):</label>
+        <input type="date" name="fecha_max" id="fecha_max" value="{{ fecha_max|default_if_none:'' }}">
     </div>
     <button type="submit">Filtrar</button>
 </form>
 
-<table border="1" style="width: 100%; margin-top: 1rem; border-collapse: collapse;">
+<table class="tabla-historial">
+    <caption class="visually-hidden">Historial de predicciones individuales</caption>
     <thead>
-        <tr style="background-color: #f2f2f2;">
-            <th>Nombre</th>
-            <th>Fecha</th>
-            <th>Edad</th>
-            <th>BMI</th>
-            <th>Edad Gestacional</th>
-            <th>Logística</th>
-            <th>SVM</th>
-            <th>Red Neuronal</th>
-            <th>Mapa Cognitivo Difuso</th>
+        <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Edad</th>
+            <th scope="col">BMI</th>
+            <th scope="col">Edad Gestacional</th>
+            <th scope="col">Logística</th>
+            <th scope="col">SVM</th>
+            <th scope="col">Red Neuronal</th>
+            <th scope="col">Mapa Cognitivo Difuso</th>
         </tr>
     </thead>
     <tbody>
         {% for prediccion in historial %}
-        <tr class="clickable-row" data-href="{% url 'detalles_prediccion' prediccion.id %}" style="cursor: pointer;">
-            <td>{{ prediccion.nombre }}</td>
+        <tr class="clickable-row" data-href="{% url 'detalles_prediccion' prediccion.id %}">
+            <td><a href="{% url 'detalles_prediccion' prediccion.id %}">{{ prediccion.nombre }}</a></td>
             <td>{{ prediccion.fecha|date:"Y-m-d H:i" }}</td>
             <td>{{ prediccion.C1 }}</td>
             <td>{{ prediccion.C2 }}</td>
@@ -68,12 +92,6 @@
         rows.forEach(row => {
             row.addEventListener('click', () => {
                 window.location.href = row.dataset.href;
-            });
-            row.addEventListener('mouseover', () => {
-                row.style.backgroundColor = '#f0f8ff';
-            });
-            row.addEventListener('mouseout', () => {
-                row.style.backgroundColor = '';
             });
         });
     });

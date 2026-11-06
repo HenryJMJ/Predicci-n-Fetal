@@ -2,18 +2,42 @@
 {% block title %}Detalles de la Predicción{% endblock %}
 
 {% block contenido %}
+<style>
+    .tabla-detalles {
+        border-collapse: collapse;
+    }
+    .tabla-detalles th,
+    .tabla-detalles td {
+        border: 1px solid #999;
+        padding: 5px 10px;
+        text-align: left;
+    }
+    .tabla-detalles thead th {
+        background-color: #f0f0f0;
+    }
+</style>
+
 <h2>Detalles de la Predicción</h2>
 <p><strong>Nombre:</strong> {{ prediccion.nombre }}</p>
 <p><strong>Fecha:</strong> {{ prediccion.fecha|date:"Y-m-d H:i" }}</p>
 
 <h3>Datos ingresados:</h3>
-<table border="1" cellpadding="5">
-    {% for nombre, valor in campos.items %}
-    <tr>
-        <td><strong>{{ nombre }}</strong></td>
-        <td>{{ valor }}</td>
-    </tr>
-    {% endfor %}
+<table class="tabla-detalles">
+    <caption class="visually-hidden">Datos clínicos ingresados para la predicción</caption>
+    <thead>
+        <tr>
+            <th scope="col">Variable</th>
+            <th scope="col">Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for nombre, valor in campos.items %}
+        <tr>
+            <th scope="row">{{ nombre }}</th>
+            <td>{{ valor }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
 <h3>Resultados de los modelos:</h3>
@@ -24,5 +48,5 @@
 </ul>
 
 <br>
-<a href="{% url 'historial_predicciones' %}">←</a>
+<a href="{% url 'historial_predicciones' %}">← Volver al historial</a>
 {% endblock %}

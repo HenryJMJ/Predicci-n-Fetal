@@ -6,8 +6,8 @@
 <h2>Entrenamiento de Modelos</h2>
 
 <p style="color: red; font-weight: bold;">
-    ⚠️ Advertencia: El entrenamiento de modelos solo debe realizarse en tu equipo local. 
-    En el servidor Render (instancia gratuita), esta operación puede tardar demasiado y fallar 
+    ⚠️ Advertencia: El entrenamiento de modelos solo debe realizarse en tu equipo local.
+    En el servidor Render (instancia gratuita), esta operación puede tardar demasiado y fallar
     debido a los límites de tiempo y recursos.
 </p>
 
@@ -15,27 +15,29 @@
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="file" name="archivo" required>
+    <label for="archivo">Archivo Excel (.xlsx):</label>
+    <input type="file" name="archivo" id="archivo" accept=".xlsx" required>
     <button type="submit">Entrenar Modelos</button>
 </form>
 
 {% if resultado %}
     <h3>Exactitud de los modelos:</h3>
+    {# 'resultado' lo arma la vista con valores numéricos propios (sin datos del usuario), por eso es seguro usar |safe para respetar los <br> #}
     <p>{{ resultado|safe }}</p>
 
     <h4>Matriz de Confusión - Regresión Logística</h4>
     {% if grafica_cm %}
-        <img src="data:image/png;base64,{{ grafica_cm }}" alt="Matriz de Confusión">
+        <img src="data:image/png;base64,{{ grafica_cm }}" alt="Matriz de Confusión de la Regresión Logística">
     {% endif %}
 
     <h4>Comparación de Exactitudes</h4>
     {% if grafica_bar %}
-        <img src="data:image/png;base64,{{ grafica_bar }}" alt="Gráfico de Barras">
+        <img src="data:image/png;base64,{{ grafica_bar }}" alt="Gráfico de barras que compara la exactitud de los modelos">
     {% endif %}
 
     <h4>Mapa Cognitivo Difuso</h4>
     {% if grafica_mcd %}
-        <img src="data:image/png;base64,{{ grafica_mcd }}" alt="Mapa Cognitivo Difuso">
+        <img src="data:image/png;base64,{{ grafica_mcd }}" alt="Mapa Cognitivo Difuso: relaciones entre variables">
     {% endif %}
 {% endif %}
 {% endblock %}
