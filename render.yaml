@@ -10,8 +10,8 @@ services:
       python manage.py migrate
     startCommand: gunicorn ProyectoFinal.wsgi --bind 0.0.0.0:$PORT --timeout 120
     envVars:
-      - key: DJANGO_SECRET_KEY
-        value: "django-insecure-ax!4glh(e@c6kjz&x4yx96q*6_c&jhi!+eg4l-u^km7bi5=#=z"
+      - key: SECRET_KEY
+        value: os.environ["SECRET_KEY"]
       - key: DJANGO_DEBUG
         value: "True"
       - key: DJANGO_ALLOWED_HOSTS
