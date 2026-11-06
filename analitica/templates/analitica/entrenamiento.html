@@ -22,8 +22,11 @@
 
 {% if resultado %}
     <h3>Exactitud de los modelos:</h3>
-    {# 'resultado' lo arma la vista con valores numéricos propios (sin datos del usuario), por eso es seguro usar |safe para respetar los <br> #}
-    <p>{{ resultado|safe }}</p>
+    <ul>
+        {% for nombre, valor in resultado.items %}
+        <li><strong>{{ nombre }}:</strong> {{ valor }}</li>
+        {% endfor %}
+    </ul>
 
     <h4>Matriz de Confusión - Regresión Logística</h4>
     {% if grafica_cm %}
