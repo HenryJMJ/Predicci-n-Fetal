@@ -181,12 +181,12 @@ def entrenamiento(request):
         image_mcd = _figura_a_base64()
 
         contexto = {
-            'resultado': f"""
-                Regresión Logística: {acc_log:.2%}<br>
-                SVM: {acc_svm:.2%}<br>
-                Red Neuronal: {acc_rna:.2%}<br>
-                Mapa Cognitivo Difuso: Visualización generada
-            """,
+            'resultado': {
+                'Regresión Logística': f"{acc_log:.2%}",
+                'SVM': f"{acc_svm:.2%}",
+                'Red Neuronal': f"{acc_rna:.2%}",
+                'Mapa Cognitivo Difuso': 'Visualización generada',
+            },
             'grafica_cm': image_cm,
             'grafica_bar': image_bar,
             'grafica_mcd': image_mcd
